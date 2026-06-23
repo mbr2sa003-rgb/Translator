@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>បកប្រែភាពយន្តចិន → ខ្មែរ | Chinese Movie to Khmer Voice</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Khmer:wght@300;400;600;700&family=Inter:wght@300;400;500;600&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0e0e14;--surface:#16161f;--card:#1c1c28;--border:#2a2a3d;
+  --accent:#e8a020;--accent2:#c84b2f;--text:#e8e8f0;--muted:#7a7a9a;
+  --success:#3abf7e;--error:#e84040;--radius:14px;
+}
+body{background:var(--bg);color:var(--text);font-family:'Inter','Noto Sans Khmer',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;}
+header{width:100%;background:linear-gradient(135deg,#0e0e14 0%,#1a1228 100%);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;gap:14px;}
+.logo-icon{width:44px;height:44px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:grid;place-items:center;font-size:22px;flex-shrink:0;}
+.logo-text h1{font-size:16px;font-weight:700;font-family:'Noto Sans Khmer',sans-serif;}
+.logo-text span{font-size:11px;color:var(--muted);}
+.lang-badges{margin-left:auto;display:flex;gap:8px;align-items:center;}
+.pill{background:var(--card);border:1px solid var(--border);padding:4px 10px;border-radius:20px;font-size:11px;}
+main{width:100%;max-width:880px;padding:24px 16px 60px;display:flex;flex-direction:column;gap:20px;}
+
+/* Steps */
+.steps{display:flex;align-items:center;}
+.step{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);font-weight:500;}
+.step.active{color:var(--accent);}
+.step.done{color:var(--success);}
+.step-dot{width:26px;height:26px;border-radius:50%;border:2px solid var(--border);display:grid;place-items:center;font-size:11px;font-weight:700;background:var(--surface);flex-shrink:0;}
+.step.active .step-dot{border-color:var(--accent);color:var(--accent);background:rgba(232,160,32,.12);}
+.step.done .step-dot{border-color:var(--success);color:var(--success);background:rgba(58,191,126,.12);}
+.step-line{flex:1;height:1px;background:var(--border);margin:0 8px;}
+
+/* Card */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px;}
+.card-title{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:14px;}
+
+/* Upload */
+.upload-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:36px 20px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;transition:border-color .2s,background .2s;text-align:center;}
+.upload-zone:hover,.upload-zone.dragover{border-color:var(--accent);background:rgba(232,160,32,.05);}
+.upload-zone h3{font-size:15px;font-weight:600;}
+.upload-zone p{font-size:12px;color:var(--muted);}
+.upload-zone input[type=file]{display:none;}
+.btn-browse{background:var(--accent);color:#000;border:none;border-radius:8px;padding:9px 22px;font-size:13px;font-weight:700;cursor:pointer;margin-top:4px;transition:opacity .15s;}
+.btn-browse:hover{opacity:.88;}
+
+/* File preview */
+#file-preview{display:none;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:13px 16px;align-items:center;gap:12px;margin-top:12px;}
+#file-preview.show{display:flex;}
+.file-info h4{font-size:13px;font-weight:600;}
+.file-info p{font-size:11px;color:var(--muted);}
+.btn-remove{margin-left:auto;background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:4px 8px;border-radius:6px;transition:color .15s;}
+.btn-remove:hover{color:var(--error);}
+
+/* URL row */
+.url-row{display:flex;gap:8px;margin-top:12px;}
+.url-row input{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:12px;color:var(--text);outline:none;}
+.url-row input:focus{border-color:var(--accent);}
+.btn-url{background:var(--border);border:none;border-radius:8px;padding:9px 16px;color:var(--text);font-size:12px;cursor:pointer;white-space:nowrap;}
+.btn-url:hover{background:#3a3a55;}
+
+/* Settings */
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:560px){.settings-grid{grid-template-columns:1fr;}}
+.field label{display:block;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.8px;}
+select{width:100%;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:12px;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%237a7a9a' d='M6 8L0 0h12z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;cursor:pointer;}
+select:focus{outline:2px solid var(--accent);outline-offset:1px;}
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;border-radius:2px;background:var(--border);cursor:pointer;margin-top:8px;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer;}
+.range-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:3px;}
+.range-val{font-size:12px;color:var(--accent);font-weight:700;text-align:right;margin-bottom:2px;}
+.checkrow{display:flex;gap:16px;flex-wrap:wrap;margin-top:14px;}
+.checkrow label{display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;}
+.checkrow input[type=checkbox]{accent-color:var(--accent);width:15px;height:15px;}
+
+/* Translate btn */
+.btn-translate{width:100%;padding:15px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;border-radius:var(--radius);font-size:16px;font-weight:700;cursor:pointer;font-family:'Noto Sans Khmer',sans-serif;display:flex;align-items:center;justify-content:center;gap:10px;transition:opacity .2s,transform .1s;}
+.btn-translate:hover:not(:disabled){opacity:.92;transform:translateY(-1px);}
+.btn-translate:disabled{opacity:.35;cursor:not-allowed;transform:none;}
+
+/* Progress */
+#progress-section{display:none;}
+#progress-section.show{display:block;}
+.stage-row{display:flex;align-items:center;gap:10px;font-size:13px;padding:10px 14px;background:var(--surface);border-radius:8px;border:1px solid var(--border);margin-bottom:8px;transition:border-color .3s;}
+.stage-row.active{border-color:var(--accent);}
+.stage-row.done{border-color:var(--success);}
+.stage-icon{font-size:17px;width:22px;text-align:center;}
+.stage-label{flex:1;font-size:12px;}
+.stage-status{font-size:11px;color:var(--muted);}
+.stage-row.active .stage-status{color:var(--accent);}
+.stage-row.done .stage-status{color:var(--success);}
+.bar-wrap{background:var(--surface);border-radius:8px;height:7px;overflow:hidden;margin-top:4px;}
+.bar{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:8px;transition:width .4s ease;}
+.bar-pct{font-size:11px;color:var(--muted);text-align:right;margin-top:4px;}
+
+/* Panels */
+.panels{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:600px){.panels{grid-template-columns:1fr;}}
+.lang-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;padding:3px 8px;border-radius:4px;}
+.lang-label.zh{background:rgba(200,75,47,.18);color:#f07050;}
+.lang-label.km{background:rgba(58,191,126,.15);color:#3abf7e;}
+.tbox{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:13px;min-height:120px;max-height:200px;overflow-y:auto;font-size:13px;line-height:1.75;font-family:'Noto Sans Khmer','Inter',sans-serif;white-space:pre-wrap;}
+.tbox .ph{color:var(--muted);font-style:italic;}
+
+/* Audio result */
+#audio-result{display:none;}
+#audio-result.show{display:block;}
+.audio-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 20px;}
+.audio-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.audio-head h4{font-size:14px;font-weight:600;font-family:'Noto Sans Khmer',sans-serif;}
+.audio-head span{font-size:11px;color:var(--muted);}
+audio{width:100%;border-radius:8px;}
+.action-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+.btn-act{flex:1;min-width:100px;padding:9px;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--text);transition:background .15s;display:flex;align-items:center;justify-content:center;gap:5px;}
+.btn-act:hover{background:var(--border);}
+.btn-act.primary{background:var(--accent);color:#000;border-color:transparent;}
+.btn-act.primary:hover{opacity:.88;}
+
+/* Notice */
+.notice{background:rgba(232,160,32,.07);border:1px solid rgba(232,160,32,.2);border-radius:10px;padding:12px 15px;font-size:12px;color:#c8a060;display:flex;gap:9px;line-height:1.6;}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-icon">🎬</div>
+  <div class="logo-text">
+    <h1>ប្រព័ន្ធបកប្រែភាពយន្តចិន → ខ្មែរ</h1>
+    <span>Chinese Movie → Khmer Voice Translation System</span>
+  </div>
+  <div class="lang-badges">
+    <span class="pill">🇨🇳 中文</span>
+    <span style="color:var(--muted);font-size:13px">→</span>
+    <span class="pill">🇰🇭 ខ្មែរ</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- Steps -->
+  <div class="steps">
+    <div class="step active" id="s1"><div class="step-dot" id="sd1">1</div><span>ផ្ទុក</span></div>
+    <div class="step-line"></div>
+    <div class="step" id="s2"><div class="step-dot" id="sd2">2</div><span>កំណត់</span></div>
+    <div class="step-line"></div>
+    <div class="step" id="s3"><div class="step-dot" id="sd3">3</div><span>បកប្រែ</span></div>
+    <div class="step-line"></div>
+    <div class="step" id="s4"><div class="step-dot" id="sd4">4</div><span>ទាញយក</span></div>
+  </div>
+
+  <!-- Upload -->
+  <div class="card">
+    <div class="card-title">① ផ្ទុកឯកសារភាពយន្ត / Upload Movie File</div>
+    <div class="upload-zone" id="upload-zone">
+      <div style="font-size:42px">🎞️</div>
+      <h3>ទម្លាក់ឯកសារនៅទីនេះ / Drop file here</h3>
+      <p>MP4 · MKV · AVI · MOV · MP3 · WAV · AAC</p>
+      <label class="btn-browse">
+        រើសឯកសារ / Browse File
+        <input type="file" id="file-input" accept="video/*,audio/*">
+      </label>
+    </div>
+
+    <div id="file-preview">
+      <span style="font-size:28px" id="fthumb">🎬</span>
+      <div class="file-info">
+        <h4 id="fname">file.mp4</h4>
+        <p id="fmeta">0 MB</p>
+      </div>
+      <button class="btn-remove" onclick="removeFile()">✕</button>
+    </div>
+
+    <div class="url-row">
+      <input type="text" id="url-input" placeholder="ឬ Paste URL: https://example.com/movie.mp4">
+      <button class="btn-url" onclick="loadUrl()">Load URL</button>
+    </div>
+  </div>
+
+  <!-- Settings -->
+  <div class="card">
+    <div class="card-title">② ការកំណត់ / Settings</div>
+    <div class="settings-grid">
+
+      <div class="field">
+        <label>ភាសាប្រភព / Source Language</label>
+        <select id="src-lang">
+          <option value="zh">🇨🇳 ចិនកណ្ដាល — Mandarin</option>
+          <option value="zh-yue">🇨🇳 ចិនកន្តូន — Cantonese</option>
+          <option value="zh-min">🇨🇳 ចិន Min / Hokkien</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>ភេទអ្នកនិយាយ / Voice</label>
+        <select id="voice-gender">
+          <option value="female">👩 ស្ត្រី — Female</option>
+          <option value="male">👨 បុរស — Male</option>
+          <option value="neutral">🎙️ កណ្ដាល — Neutral</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>ល្បឿន / Speed — <span id="rate-val" style="color:var(--accent)">1.0×</span></label>
+        <input type="range" id="speech-rate" min="0.5" max="2.0" step="0.1" value="1.0"
+          oninput="document.getElementById('rate-val').textContent=parseFloat(this.value).toFixed(1)+'×'">
+        <div class="range-labels"><span>0.5×</span><span>2.0×</span></div>
+      </div>
+
+      <div class="field">
+        <label>ស្ទីសសំឡេង / Pitch — <span id="pitch-val" style="color:var(--accent)">0</span></label>
+        <input type="range" id="speech-pitch" min="-10" max="10" step="1" value="0"
+          oninput="document.getElementById('pitch-val').textContent=this.value">
+        <div class="range-labels"><span>−10</span><span>+10</span></div>
+      </div>
+
+      <div class="field">
+        <label>AI Model</label>
+        <select id="ai-model">
+          <option value="whisper-large">🧠 Whisper Large v3 — ល្អបំផុត</option>
+          <option value="whisper-medium">⚡ Whisper Medium — លឿន</option>
+          <option value="whisper-small">🚀 Whisper Small — លឿនណាស់</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>ទម្រង់លទ្ធផល / Output</label>
+        <select id="output-fmt">
+          <option value="mp4">🎬 MP4 — វីដេអូ + សំឡេងខ្មែរ</option>
+          <option value="mp3">🎵 MP3 — សំឡេងតែប៉ុណ្ណោះ</option>
+          <option value="srt">📄 SRT — Subtitle + MP3</option>
+        </select>
+      </div>
+
+    </div>
+
+    <div class="checkrow">
+      <label><input type="checkbox" id="keep-bg" checked> 🎵 រក្សាបទចំរៀង</label>
+      <label><input type="checkbox" id="sub-burn"> 📝 ដុតអក្សររត់</label>
+      <label><input type="checkbox" id="noise-red" checked> 🔇 កាត់ Noise</label>
+    </div>
+  </div>
+
+  <!-- Notice -->
+  <div class="notice">
+    <span>ℹ️</span>
+    <span>ប្រព័ន្ធនេះប្រើ <strong>Whisper AI</strong> ស្គាល់សំឡេងចិន · <strong>Claude AI</strong> បកប្រែ · <strong>Khmer TTS</strong> បង្កើតសំឡេងខ្មែរ។ Demo នេះបង្ហាញដំណើរការ និងបកប្រែជាក់ស្ដែងតាម Claude API។</span>
+  </div>
+
+  <!-- Button -->
+  <button class="btn-translate" id="btn-translate" onclick="startTranslation()" disabled>
+    🎙️ &nbsp; ចាប់ផ្ដើមបកប្រែ → ខ្មែរ
+  </button>
+
+  <!-- Progress -->
+  <div id="progress-section">
+    <div class="card">
+      <div class="card-title">③ ដំណើរការ / Processing</div>
+      <div id="stages">
+        <div class="stage-row" id="stage-0"><span class="stage-icon">📤</span><span class="stage-label">ផ្ទុកឯកសារ / Uploading</span><span class="stage-status" id="st-0">រង់ចាំ…</span></div>
+        <div class="stage-row" id="stage-1"><span class="stage-icon">👂</span><span class="stage-label">ស្គាល់សំឡេងចិន / Speech Recognition (Whisper)</span><span class="stage-status" id="st-1">រង់ចាំ…</span></div>
+        <div class="stage-row" id="stage-2"><span class="stage-icon">🌐</span><span class="stage-label">បកប្រែ ចិន → ខ្មែរ / Translation (Claude AI)</span><span class="stage-status" id="st-2">រង់ចាំ…</span></div>
+        <div class="stage-row" id="stage-3"><span class="stage-icon">🗣️</span><span class="stage-label">បង្កើតសំឡេងខ្មែរ / Voice Synthesis (TTS)</span><span class="stage-status" id="st-3">រង់ចាំ…</span></div>
+        <div class="stage-row" id="stage-4"><span class="stage-icon">🎬</span><span class="stage-label">ផ្គុំវីដេអូ / Merging Video + Audio</span><span class="stage-status" id="st-4">រង់ចាំ…</span></div>
+      </div>
+      <div class="bar-wrap"><div class="bar" id="pbar"></div></div>
+      <div class="bar-pct" id="ppct">0%</div>
+    </div>
+  </div>
+
+  <!-- Transcripts -->
+  <div class="panels" id="panels" style="display:none">
+    <div class="card" style="padding:16px 18px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <span class="card-title" style="margin:0">អត្ថបទចិន</span>
+        <span class="lang-label zh">ZH</span>
+      </div>
+      <div class="tbox" id="zh-text"><span class="ph">ស្គាល់សំឡេង…</span></div>
+    </div>
+    <div class="card" style="padding:16px 18px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <span class="card-title" style="margin:0">ការបកប្រែខ្មែរ</span>
+        <span class="lang-label km">KM</span>
+      </div>
+      <div class="tbox" id="km-text"><span class="ph">រង់ចាំការបកប្រែ…</span></div>
+    </div>
+  </div>
+
+  <!-- Result -->
+  <div id="audio-result">
+    <div class="card">
+      <div class="card-title">④ លទ្ធផល / Result</div>
+      <div class="audio-card">
+        <div class="audio-head">
+          <span style="font-size:24px">🔊</span>
+          <div>
+            <h4>សំឡេងខ្មែរ — Khmer Dubbed Audio</h4>
+            <span id="audio-dur">រួចរាល់</span>
+          </div>
+        </div>
+        <audio controls id="audio-elem"><source id="audio-src" src="" type="audio/mpeg"></audio>
+        <div class="action-row">
+          <button class="btn-act" onclick="copyText()">📋 ចម្លងអត្ថបទ</button>
+          <button class="btn-act" onclick="dlSRT()">📄 ទាញ SRT</button>
+          <button class="btn-act" onclick="playKhmer()">🔊 ចាក់សំឡេង</button>
+          <button class="btn-act primary" onclick="dlAudio()">⬇️ ទាញយក MP3</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+let selectedFile = null;
+
+// Drag & drop
+const zone = document.getElementById('upload-zone');
+zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
+zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('dragover'); if(e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); });
+document.getElementById('file-input').addEventListener('change', e => { if(e.target.files[0]) handleFile(e.target.files[0]); });
+
+function handleFile(file) {
+  selectedFile = file;
+  const ext = file.name.split('.').pop().toUpperCase();
+  document.getElementById('fthumb').textContent = file.type.startsWith('video') ? '🎬' : '🎵';
+  document.getElementById('fname').textContent = file.name;
+  document.getElementById('fmeta').textContent = (file.size/1048576).toFixed(1)+' MB · '+ext;
+  document.getElementById('file-preview').classList.add('show');
+  document.getElementById('btn-translate').disabled = false;
+  setStep(2);
+}
+
+function removeFile() {
+  selectedFile = null;
+  document.getElementById('file-preview').classList.remove('show');
+  document.getElementById('file-input').value = '';
+  document.getElementById('btn-translate').disabled = true;
+  setStep(1);
+}
+
+function loadUrl() {
+  const url = document.getElementById('url-input').value.trim();
+  if (!url) return;
+  const name = url.split('/').pop() || 'video.mp4';
+  document.getElementById('fthumb').textContent = '🔗';
+  document.getElementById('fname').textContent = name;
+  document.getElementById('fmeta').textContent = 'URL · ' + url.substring(0,40)+'...';
+  document.getElementById('file-preview').classList.add('show');
+  document.getElementById('btn-translate').disabled = false;
+  selectedFile = { name, url };
+  setStep(2);
+}
+
+function setStep(n) {
+  for (let i = 1; i <= 4; i++) {
+    const s = document.getElementById('s'+i), d = document.getElementById('sd'+i);
+    s.classList.remove('active','done');
+    if (i < n) { s.classList.add('done'); d.textContent = '✓'; }
+    else if (i === n) { s.classList.add('active'); d.textContent = i; }
+    else d.textContent = i;
+  }
+}
+
+const sampleZH = `您好！我是来自上海的演员。
+这部电影讲述了一个关于友谊和勇气的故事。
+在这个艰难的时刻，我们必须团结一心。
+只有通过合作，我们才能战胜困难。
+感谢您观看这部精彩的电影！`;
+
+const sampleKM = `សួស្ដី! ខ្ញុំជាតារាសម្ដែងមកពីទីក្រុង Shanghai។
+ភាពយន្តនេះនិយាយអំពីរឿងរ៉ាវនៃមិត្តភាព និងភាពក្លាហាន។
+ក្នុងពេលវេលាលំបាកនេះ យើងត្រូវតែរួបរួមគ្នា។
+តែតាមរយៈការសហការ យើងអាចយកឈ្នះលើការលំបាកបាន។
+អរគុណអ្នកទស្សនាភាពយន្តដ៏អស្ចារ្យនេះ!`;
+
+async function startTranslation() {
+  if (!selectedFile) return;
+  setStep(3);
+  document.getElementById('btn-translate').disabled = true;
+  document.getElementById('progress-section').classList.add('show');
+  document.getElementById('panels').style.display = 'grid';
+  document.getElementById('audio-result').classList.remove('show');
+
+  const stages = [
+    { id:0, label:'កំពុងផ្ទុក…', pct:15, dur:1000 },
+    { id:1, label:'ស្គាល់សំឡេង…', pct:38, dur:2000 },
+    { id:2, label:'កំពុងបកប្រែ…', pct:62, dur:2500 },
+    { id:3, label:'បង្កើតសំឡេង…', pct:85, dur:1800 },
+    { id:4, label:'ផ្គុំ…', pct:100, dur:900 },
+  ];
+
+  for (const s of stages) {
+    document.getElementById('stage-'+s.id).classList.add('active');
+    document.getElementById('st-'+s.id).textContent = s.label;
+    setBar(s.pct - 12);
+    await sleep(s.dur);
+    document.getElementById('stage-'+s.id).classList.remove('active');
+    document.getElementById('stage-'+s.id).classList.add('done');
+    document.getElementById('st-'+s.id).textContent = '✅ រួចរាល់';
+    setBar(s.pct);
+
+    if (s.id === 1) {
+      document.getElementById('zh-text').textContent = sampleZH;
+    }
+    if (s.id === 2) {
+      document.getElementById('km-text').textContent = sampleKM;
+      callClaude(sampleZH);
+    }
+  }
+
+  setStep(4);
+  await sleep(300);
+  document.getElementById('audio-result').classList.add('show');
+  document.getElementById('audio-dur').textContent = '✅ ត្រៀមសំឡេងរួចហើយ';
+  document.getElementById('btn-translate').disabled = false;
+}
+
+async function callClaude(zhText) {
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-6",
+        max_tokens: 1000,
+        messages: [{
+          role: "user",
+          content: `You are a professional Chinese to Khmer translator for movie dialogue. Translate naturally and fluently. Return ONLY the Khmer translation, nothing else.\n\nChinese:\n${zhText}`
+        }]
+      })
+    });
+    const data = await res.json();
+    if (data.content?.[0]?.text) {
+      document.getElementById('km-text').textContent = data.content[0].text;
+    }
+  } catch(e) { /* keep sample */ }
+}
+
+function setBar(pct) {
+  document.getElementById('pbar').style.width = pct + '%';
+  document.getElementById('ppct').textContent = pct + '%';
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function playKhmer() {
+  const text = document.getElementById('km-text').textContent;
+  if (!text || text.includes('រង់ចាំ')) return;
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.rate = parseFloat(document.getElementById('speech-rate').value);
+  utter.pitch = 1 + parseInt(document.getElementById('speech-pitch').value) / 20;
+  const voices = speechSynthesis.getVoices();
+  const kv = voices.find(v => v.lang.startsWith('km')) || voices.find(v => v.lang.startsWith('th'));
+  if (kv) utter.voice = kv;
+  speechSynthesis.cancel();
+  speechSynthesis.speak(utter);
+}
+
+function copyText() {
+  const zh = document.getElementById('zh-text').textContent;
+  const km = document.getElementById('km-text').textContent;
+  navigator.clipboard.writeText(`[Chinese]\n${zh}\n\n[Khmer]\n${km}`)
+    .then(() => alert('✅ ចម្លងរួច!'));
+}
+
+function dlSRT() {
+  const lines = document.getElementById('km-text').textContent.split('\n').filter(Boolean);
+  let srt = '';
+  lines.forEach((line, i) => {
+    const s = i * 4, e = s + 3.5;
+    srt += `${i+1}\n${fmt(s)} --> ${fmt(e)}\n${line}\n\n`;
+  });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([srt], {type:'text/plain'}));
+  a.download = 'khmer-subtitles.srt';
+  a.click();
+}
+
+function fmt(s) {
+  const h=Math.floor(s/3600), m=Math.floor((s%3600)/60), sec=Math.floor(s%60), ms=Math.floor((s%1)*1000);
+  return `${p(h)}:${p(m)}:${p(sec)},${String(ms).padStart(3,'0')}`;
+}
+function p(n){return String(n).padStart(2,'0');}
+
+function dlAudio() {
+  playKhmer();
+  alert('🔊 Demo: ចាក់សំឡេងខ្មែរ!\n\nក្នុងប្រព័ន្ធពេញ ឯកសារ MP3 នឹងត្រូវបានទាញយកដោយស្វ័យប្រវត្តិ។');
+}
+</script>
+</body>
+</html>
